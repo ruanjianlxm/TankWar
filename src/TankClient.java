@@ -14,6 +14,7 @@ public class TankClient extends Frame{
 	  List<Explode>  explodes = new ArrayList<Explode>();
 	  List<Tank>  tanks= new ArrayList<Tank>();
 	  Image offScreenImage =null;
+	  Blood b =new Blood();
 	  Wall w1 =new Wall(100, 200, 30, 150, this),w2= new Wall(300, 500, 300, 20, this);
 	  
 	public void paint(Graphics g) {
@@ -45,6 +46,8 @@ public class TankClient extends Frame{
 		myTank.draw(g);
 		w1.draw(g);
 		w2.draw(g);
+		b.draw(g);
+		myTank.eat(b);
 	
 
 	}

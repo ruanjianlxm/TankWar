@@ -14,6 +14,7 @@ public class Tank {
 	private int oldX, oldY;
 	private int step = r.nextInt(12) + 3;
 	private int life = 100;
+	private BloodBar bb = new BloodBar();
 
 	public int getLife() {
 		return life;
@@ -79,6 +80,8 @@ public class Tank {
 		}
 		g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
+		if(good){
+		bb.draw(g);}
 		move();
 		switch (ptDir) {
 		case L:
@@ -333,6 +336,28 @@ public class Tank {
 		for(int i = 0;i<8;i++){
 		fire(dirs[i]);
 		}
+		
+	}
+	private  class BloodBar {
+		public void draw(Graphics g) {
+			Color c=g.getColor();
+			g.setColor(Color.RED);
+			g.drawRect(x, y-10, WIDTH, 10);
+			int w=WIDTH*life/100;
+			g.fillRect(x, y-10, w, 10);
+			g.setColor(c);
+		}
+		
+	}
+	public boolean eat(Blood b) {
+		
+
+		if(this.live&&b.isLive()&&this.getRect().intersects(b.getRect())){
+			this.life=100;
+			b.setLive(false);
+			return true;
+		}
+		return false;
 		
 	}
 }
