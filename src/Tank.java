@@ -13,6 +13,15 @@ public class Tank {
 	private boolean live = true;
 	private int oldX, oldY;
 	private int step = r.nextInt(12) + 3;
+	private int life = 100;
+
+	public int getLife() {
+		return life;
+	}
+
+	public void setLife(int life) {
+		this.life = life;
+	}
 
 	public boolean isLive() {
 		return live;
@@ -227,6 +236,10 @@ public class Tank {
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
 		switch (key) {
+		case KeyEvent.VK_A:
+			superFire();
+			break;
+		
 		case KeyEvent.VK_CONTROL:
 			fire();
 			break;
@@ -264,6 +277,20 @@ public class Tank {
 		return m;
 
 	}
+	
+	public Missile fire(Direction dir){
+		if (!live) {
+			return null;
+		}
+
+		int x = this.x + Tank.WIDTH / 2 - Missile.WIDTH / 2;
+		int y = this.y + Tank.HEIGHT / 2 - Missile.HEIGHT / 2;
+		Missile m = new Missile(x, y, good, dir, this.tc);
+		tc.missiles.add(m);
+		return m;
+		
+	}
+	
 
 	public Rectangle getRect() {
 		return new Rectangle(x, y, WIDTH, HEIGHT);
@@ -299,5 +326,13 @@ public class Tank {
 			}
 		}
 		return false;
+	}
+	
+	private void superFire(){
+		Direction[] dirs =Direction.values();
+		for(int i = 0;i<8;i++){
+		fire(dirs[i]);
+		}
+		
 	}
 }
