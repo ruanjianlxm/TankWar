@@ -7,17 +7,13 @@ public class TankClient extends Frame{
   public static final  int GAME_WIDTH = 800;
   public static final  int GAME_HEIGHT = 600;
   
-	  int x = 50 , y = 50;
+	  Tank myTank = new Tank(50, 50);
 		Image offScreenImage =null;
 	public void paint(Graphics g) {
-	Color c = g.getColor();
-	g.setColor(Color.RED);
-	g.fillOval(x, y, 30, 30);
-	g.setColor(c);
-
+		myTank.draw(g);
 	}
 	
-	public void update(Graphics g) {
+    public void update(Graphics g) {
 		if(offScreenImage == null) {
 			offScreenImage = this.createImage(GAME_WIDTH, GAME_HEIGHT);
 		}
@@ -29,7 +25,6 @@ public class TankClient extends Frame{
 		paint(gOffScreen);
 		g.drawImage(offScreenImage, 0, 0, null);
 	}
-
 
 	public void lauchFrame() {
     	this.setLocation(400,300);
@@ -72,24 +67,14 @@ public class TankClient extends Frame{
 	}
 
 	private class KeyMonitor extends KeyAdapter{
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			myTank.keyReleased(e);
+		}
+
 		public void keyPressed(KeyEvent e) {
-			 int key = e.getKeyCode();
-		      switch (key) {
-			   case KeyEvent.VK_LEFT:
-				   x-=5;
-			       break;
-			   case KeyEvent.VK_UP:
-				   y-=5;
-			        break;
-			   case KeyEvent.VK_RIGHT:
-				   x+=5;
-			        break;
-			   case KeyEvent.VK_DOWN:
-				   y+=5;
-			   break;
-				
-			
-			}
+			 myTank.keyPressed(e);
 			 
 		}
 		
