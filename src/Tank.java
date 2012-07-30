@@ -1,7 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.nio.Buffer;
+
 
 
 public class Tank {
@@ -9,26 +10,39 @@ public class Tank {
  public static final int YSPEAD = 5;
  public static final int WIDTH = 30;
  public static final int HEIGHT = 30;
+ private boolean live = true;
+	public boolean isLive() {
+	return live;
+}
+public void setLive(boolean live) {
+	this.live = live;
+}
 	int x,y;
 	TankClient tc = null;
+	private boolean good;
 	
 	private boolean bL = false, bU = false,bR = false , bD = false;
 	enum Direction {L,LU,U,RU,R,RD,D,LD,STOP};
 	private Direction dir = Direction.STOP;
 	private Direction ptDir = Direction.D;
 	
-	public Tank(int x, int y) {
+	public Tank(int x, int y,boolean good) {
 		this.x = x;
 		this.y = y;
+		this.good=good;
 	}
-	public Tank(int x,int y, TankClient tc) {
-		this(x, y);
+	public Tank(int x,int y,boolean good, TankClient tc) {
+		this(x, y,good);
 		this.tc=tc;
 		
 	}
 	public void draw(Graphics g){
+		if(!live) return;
 		Color c = g.getColor();
+		if(good){
 		g.setColor(Color.RED);
+		}
+		else{g.setColor(Color.BLUE);}
 		g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
 		move();
@@ -184,6 +198,9 @@ public class Tank {
 		tc.missiles.add(m);
 		return m;
 		
+	}
+	public Rectangle getRect(){
+		return new Rectangle(x,y,WIDTH,HEIGHT);
 	}
 
 }
