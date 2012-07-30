@@ -1,12 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 
 public class Missile {
 	public static final int XSPEAD = 10;
 	public static final int YSPEAD = 10;
 	 public static final int WIDTH = 10;
 	 public static final int HEIGHT = 10;
+	 private boolean good;
 
 	int x, y;
 	Tank.Direction dir;
@@ -16,15 +18,15 @@ public class Missile {
 		return Live;
 	}
 
-	public Missile(int x, int y, Tank.Direction dir) {
-		super();
+	public Missile(int x, int y,Tank.Direction dir) {
 		this.x = x;
 		this.y = y;
 		this.dir = dir;
 	}
 	
-	public Missile (int x, int y, Tank.Direction dir, TankClient tc) {
+	public Missile (int x, int y, boolean good ,Tank.Direction dir, TankClient tc) {
 		this(x, y, dir);
+		this.good=good;
 		this.tc=tc;
 		
 		
@@ -91,13 +93,30 @@ public class Missile {
 	}
 	
 	public boolean hitTank(Tank t){
-		if(this.getRect().intersects(t.getRect()) &&t.isLive() ){
+		if(this.Live&&this.getRect().intersects(t.getRect()) &&t.isLive()&&this.good!=t.isGood() ){
 			t.setLive(false);
 			this.Live = false;
 			
 			Explode e =new Explode(x, y, tc);
 			tc.explodes.add(e);
 			
+			return true;
+		}
+		return false;
+		
+	}
+	public boolean hitTanks(List<Tank> tanks) {
+		for(int i=0;i<tanks.size();i++){
+			if(hitTank(tanks.get(i))){
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	public boolean hitWall(Wall w){
+		if(this.Live&&this.getRect().intersects(w.getRect())){
+			this.Live=false;
 			return true;
 		}
 		return false;

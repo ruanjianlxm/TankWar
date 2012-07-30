@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.*;
 
 
 
@@ -10,7 +11,10 @@ public class Tank {
  public static final int YSPEAD = 5;
  public static final int WIDTH = 30;
  public static final int HEIGHT = 30;
+ private static Random  r = new Random();
  private boolean live = true;
+ private int oldX,oldY;
+ private int step=r.nextInt(12)+3;
 	public boolean isLive() {
 	return live;
 }
@@ -21,6 +25,9 @@ public void setLive(boolean live) {
 	TankClient tc = null;
 	private boolean good;
 	
+	public boolean isGood() {
+		return good;
+	}
 	private boolean bL = false, bU = false,bR = false , bD = false;
 	enum Direction {L,LU,U,RU,R,RD,D,LD,STOP};
 	private Direction dir = Direction.STOP;
@@ -29,15 +36,23 @@ public void setLive(boolean live) {
 	public Tank(int x, int y,boolean good) {
 		this.x = x;
 		this.y = y;
+		this.oldX=x;
+		this.oldY=y;
 		this.good=good;
 	}
-	public Tank(int x,int y,boolean good, TankClient tc) {
+	public Tank(int x,int y,boolean good,Direction dir, TankClient tc) {
 		this(x, y,good);
+		this.dir=dir;
 		this.tc=tc;
 		
 	}
 	public void draw(Graphics g){
-		if(!live) return;
+		if(!live) {
+			if(!good){
+				tc.tanks.remove(this);
+			
+			}
+			return;}
 		Color c = g.getColor();
 		if(good){
 		g.setColor(Color.RED);
@@ -81,6 +96,8 @@ public void setLive(boolean live) {
 	}
 	
 	void move(){
+		this.oldX=x;
+		this.oldY=y;
 		switch (dir) {
 		case L:
 			x-=XSPEAD;
@@ -125,6 +142,21 @@ public void setLive(boolean live) {
 		if(x+Tank.WIDTH>TankClient.GAME_WIDTH) x=TankClient.GAME_WIDTH-Tank.WIDTH;
 		if(y+Tank.HEIGHT>TankClient.GAME_HEIGHT) y = TankClient.GAME_HEIGHT-Tank.HEIGHT;
 		
+		if(!good){
+			Direction[] dirs = Direction.values();
+			if(step==0){
+				step=r.nextInt(12)+3;
+				int rn=r.nextInt(dirs.length);
+				dir =dirs[rn];
+			}
+			
+		
+			step--;
+			if(r.nextInt(40)>37){
+			this.fire();
+			}
+			
+		}
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -192,15 +224,30 @@ public void setLive(boolean live) {
 		
 	}
 	public Missile fire(){
+		if(!live){return null;}
+		
 		int x = this.x+Tank.WIDTH/2-Missile.WIDTH/2;
 		int y = this.y+Tank.HEIGHT/2-Missile.HEIGHT/2; 
-		Missile m = new Missile(x, y, ptDir,this.tc); 
+		Missile m = new Missile(x, y, good,ptDir,this.tc); 
 		tc.missiles.add(m);
 		return m;
 		
 	}
 	public Rectangle getRect(){
 		return new Rectangle(x,y,WIDTH,HEIGHT);
+	}
+	public boolean collidesWithWall(Wall w){
+
+		if(this.live&&this.getRect().intersects(w.getRect())){
+			this.stay();
+			return true;
+		}
+		return false;
+	}
+	private void stay() {
+		x=oldX;
+		y=oldY;
+		
 	}
 
 }
